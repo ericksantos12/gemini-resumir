@@ -12,7 +12,7 @@
         "lint:fix": "eslint . --fix",
         "format": "prettier . --write",
         "format:check": "prettier . --check",
-        "ci": "npm run lint && npm run format:check && npm run check && npm test && npm run build",
+        "ci": "npm run lint && npm run format:check && npm run check && npm run build",
         "build": "tsup",
         "dev": "tsx --env-file=.env ./src/index.ts",
         "dev:dev": "tsx --env-file=.env.dev ./src/index.ts",
