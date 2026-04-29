@@ -7,5 +7,6 @@ export const env = await validateEnv(
         BOT_TOKEN: z.string("Discord Bot Token is required").min(1),
         WEBHOOK_LOGS_URL: z.url().optional(),
         GUILD_ID: z.string().optional(),
+        GEMINI_API_KEY: z.string(),
     }),
 );
