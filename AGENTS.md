@@ -1,10 +1,11 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Opencode when working with code in this repository.
 
 ## Commands
 
 - `npm install` — install dependencies from `package-lock.json`.
+- `npm test` — run unit tests with Vitest.
 - `npm run check` — run TypeScript type checking (`tsc --noEmit`).
 - `npm run build` — build ESM output into `build/` with tsup.
 - `npm run dev` — run the bot from `src/index.ts` with `.env`.
@@ -14,7 +15,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm start` — run the compiled bot via `node --env-file=.env .` using `package.json` `main` (`build/index.js`).
 - `npm run start:dev` — run the compiled bot with `.env.dev`.
 
-There is currently no test runner, lint script, or single-test command configured. Use `npm run check` as the primary validation command unless a test framework is added.
+There is currently no lint script or single-test command configured. Use `npm test` for unit tests and `npm run check` for TypeScript validation.
 
 ## Runtime requirements and environment
 
@@ -26,6 +27,8 @@ There is currently no test runner, lint script, or single-test command configure
 ## Architecture
 
 This is a TypeScript ESM Discord bot based on `@constatic/base`, `discord.js`, and `@magicyan/discord`.
+
+- Highest priority: prefer the handlers, creators, wrappers, and lifecycle utilities provided by `@constatic/base` over direct Discord.js wiring whenever the framework offers an equivalent abstraction.
 
 - `src/index.ts` is the entrypoint. It imports validated environment config from `#env` and calls `bootstrap({ meta: import.meta, env })` from `@constatic/base`.
 - `src/env.ts` validates environment variables with Zod through `validateEnv()` and imports `src/constants.ts` for global constant setup.
