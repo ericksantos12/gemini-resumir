@@ -1,6 +1,6 @@
 # Awesome Bot Base
 
-> [!NOTE] 
+> [!NOTE]
 > This project **base** can be generated using the [Constant CLI](https://github.com/rinckodev/constatic/tree/master/tools/cli#readme)
 > See the full documentation for this base by accessing: https://constatic-docs.vercel.app/docs/discord/start
 

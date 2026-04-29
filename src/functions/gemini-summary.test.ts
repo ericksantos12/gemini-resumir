@@ -24,21 +24,26 @@ type FetchOptions = {
 
 type GeminiSummaryModule = {
     isGeminiSummaryRequest(content: string): boolean;
-    getMessagesFromLast24Hours(channel: unknown, options: {
-        now: Date;
-        beforeMessageId: string;
-        pageSize?: number;
-    }): Promise<SummaryMessage[]>;
+    getMessagesFromLast24Hours(
+        channel: unknown,
+        options: {
+            now: Date;
+            beforeMessageId: string;
+            pageSize?: number;
+        },
+    ): Promise<SummaryMessage[]>;
     buildSummaryPrompt(messages: SummaryMessage[], options?: { now?: Date }): string;
 };
 
 async function loadGeminiSummaryModule(): Promise<GeminiSummaryModule> {
     const modulePath = "./gemini-summary.js";
 
-    return await import(modulePath) as GeminiSummaryModule;
+    return (await import(modulePath)) as GeminiSummaryModule;
 }
 
-function createMessage(overrides: Partial<DiscordMessageFixture> & Pick<DiscordMessageFixture, "id" | "content" | "createdTimestamp">): DiscordMessageFixture {
+function createMessage(
+    overrides: Partial<DiscordMessageFixture> & Pick<DiscordMessageFixture, "id" | "content" | "createdTimestamp">,
+): DiscordMessageFixture {
     return {
         author: {
             bot: false,
@@ -81,13 +86,38 @@ test("fetches only human messages from the previous 24 hours before the trigger 
     const fetchCalls: FetchOptions[] = [];
     const pages = [
         createMessageCollection([
-            createMessage({ id: "105", content: "Deploy terminou sem erros", createdTimestamp: oneHourAgo, author: { bot: false, username: "ana" } }),
-            createMessage({ id: "104", content: "Mensagem automatica", createdTimestamp: twoHoursAgo, author: { bot: true, username: "ci-bot" } }),
-            createMessage({ id: "103", content: "   ", createdTimestamp: twoHoursAgo, author: { bot: false, username: "bruno" } }),
+            createMessage({
+                id: "105",
+                content: "Deploy terminou sem erros",
+                createdTimestamp: oneHourAgo,
+                author: { bot: false, username: "ana" },
+            }),
+            createMessage({
+                id: "104",
+                content: "Mensagem automatica",
+                createdTimestamp: twoHoursAgo,
+                author: { bot: true, username: "ci-bot" },
+            }),
+            createMessage({
+                id: "103",
+                content: "   ",
+                createdTimestamp: twoHoursAgo,
+                author: { bot: false, username: "bruno" },
+            }),
         ]),
         createMessageCollection([
-            createMessage({ id: "102", content: "Discussao sobre prazo", createdTimestamp: windowStart, author: { bot: false, username: "carol", displayName: "Carol" } }),
-            createMessage({ id: "101", content: "Mensagem antiga", createdTimestamp: windowStart - 1, author: { bot: false, username: "dan" } }),
+            createMessage({
+                id: "102",
+                content: "Discussao sobre prazo",
+                createdTimestamp: windowStart,
+                author: { bot: false, username: "carol", displayName: "Carol" },
+            }),
+            createMessage({
+                id: "101",
+                content: "Mensagem antiga",
+                createdTimestamp: windowStart - 1,
+                author: { bot: false, username: "dan" },
+            }),
         ]),
     ];
     const channel = {
@@ -126,18 +156,21 @@ test("fetches only human messages from the previous 24 hours before the trigger 
 
 test("builds a concise PT-BR prompt with chronological chat context", async () => {
     const { buildSummaryPrompt } = await loadGeminiSummaryModule();
-    const prompt = buildSummaryPrompt([
-        {
-            authorName: "Ana",
-            content: "Deploy terminou sem erros",
-            createdAt: new Date("2026-04-28T10:00:00.000Z"),
-        },
-        {
-            authorName: "Bruno",
-            content: "Ainda falta revisar o endpoint de resumo",
-            createdAt: new Date("2026-04-28T11:00:00.000Z"),
-        },
-    ], { now: new Date("2026-04-28T12:00:00.000Z") });
+    const prompt = buildSummaryPrompt(
+        [
+            {
+                authorName: "Ana",
+                content: "Deploy terminou sem erros",
+                createdAt: new Date("2026-04-28T10:00:00.000Z"),
+            },
+            {
+                authorName: "Bruno",
+                content: "Ainda falta revisar o endpoint de resumo",
+                createdAt: new Date("2026-04-28T11:00:00.000Z"),
+            },
+        ],
+        { now: new Date("2026-04-28T12:00:00.000Z") },
+    );
 
     expect(prompt).toMatch(/resumo conciso/i);
     expect(prompt).toMatch(/principais pontos/i);

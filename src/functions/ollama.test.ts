@@ -14,17 +14,20 @@ type FetchResponse = {
 };
 
 type OllamaModule = {
-    summarizeWithOllama(prompt: string, options: {
-        endpoint: string;
-        model: string;
-        fetch: (url: string, init: RequestInit) => Promise<FetchResponse>;
-    }): Promise<string>;
+    summarizeWithOllama(
+        prompt: string,
+        options: {
+            endpoint: string;
+            model: string;
+            fetch: (url: string, init: RequestInit) => Promise<FetchResponse>;
+        },
+    ): Promise<string>;
 };
 
 async function loadOllamaModule(): Promise<OllamaModule> {
     const modulePath = "./ollama.js";
 
-    return await import(modulePath) as OllamaModule;
+    return (await import(modulePath)) as OllamaModule;
 }
 
 test("requests a non-streaming summary from Ollama and returns the trimmed response", async () => {
@@ -50,9 +53,15 @@ test("requests a non-streaming summary from Ollama and returns the trimmed respo
 
     expect(summary).toBe("Resumo final do chat.");
     expect(calls).toHaveLength(1);
-    expect(calls[0]?.url).toBe("http://localhost:11434/api/generate");
-    expect(calls[0]?.init.method).toBe("POST");
-    expect(JSON.parse(String(calls[0]?.init.body))).toEqual({
+    const [call] = calls;
+
+    if (!call || typeof call.init.body !== "string") {
+        throw new Error("Expected a request with a string body");
+    }
+
+    expect(call.url).toBe("http://localhost:11434/api/generate");
+    expect(call.init.method).toBe("POST");
+    expect(JSON.parse(call.init.body)).toEqual({
         model: "gemma3:latest",
         prompt: "Prompt do resumo",
         stream: false,

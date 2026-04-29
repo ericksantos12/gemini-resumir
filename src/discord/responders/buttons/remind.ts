@@ -10,7 +10,8 @@ const schema = z.object({
 createResponder({
     customId: "remind/:date",
     types: [ResponderType.Button],
-    parse: schema.parse, cache: "cached",
+    parse: schema.parse,
+    cache: "cached",
     async run(interaction, { date }) {
         await interaction.reply({
             flags: ["Ephemeral"],
