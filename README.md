@@ -21,3 +21,11 @@ This is the most complete discord bot base you've ever seen! Developed by [@rinc
 - [Commands](https://constatic-docs.vercel.app/docs/discord/commands)
 - [Responder](https://constatic-docs.vercel.app/docs/discord/responders)
 - [Events](https://constatic-docs.vercel.app/docs/discord/events)
+
+## Gemini Flash setup (free tier)
+
+1. Create an API key in Google AI Studio: https://aistudio.google.com/apikey
+2. Set these variables in your `.env`:
+    - `GEMINI_API_KEY=your_key_here`
+    - `GEMINI_MODEL=gemini-flash-latest` (default in this project)
+3. Run the bot with `npm run dev`.
