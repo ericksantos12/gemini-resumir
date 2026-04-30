@@ -1,7 +1,7 @@
 import type { TextBasedChannel } from "discord.js";
 
 export async function getFormattedHistory(channel: TextBasedChannel): Promise<string> {
-    const messages = await channel.messages.fetch({ limit: 100 });
+    const messages = await channel.messages.fetch({ limit: 50 });
 
     return Array.from(messages.values())
         .filter((m) => !m.author.bot && m.content.length > 0)
